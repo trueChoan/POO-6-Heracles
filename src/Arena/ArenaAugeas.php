@@ -9,6 +9,10 @@ use App\Tile\Building;
 use App\Tile\Bush;
 use App\Tile\Grass;
 use App\Tile\Water;
+use App\Inventory\Shovel;
+use App\Tile\Tile;
+
+
 
 class ArenaAugeas extends Arena
 {
@@ -16,9 +20,12 @@ class ArenaAugeas extends Arena
     {
         $sword = new Weapon(10);
         $shield = new Shield();
+        $shovel = new Shovel();
         $hero = new Hero('Heracles', 0, 0);
         $hero->setWeapon($sword);
         $hero->setShield($shield);
+        $hero->setSecondHand($shovel);
+
 
         $monsters = [];
 
@@ -129,14 +136,49 @@ class ArenaAugeas extends Arena
         $buildings = [
             new Building(4, 8),
             new Building(5, 8),
-            new Building(6, 8), 
+            new Building(6, 8),
             new Building(4, 9),
             new Building(5, 9),
             new Building(6, 9),
         ];
-       
+
         $tiles = [...$waters, ...$grasses, ...$bushes, ...$buildings];
 
         parent::__construct($hero, $monsters, $tiles);
+    }
+
+    private function getAdjacentTiles(Tile $tile): array
+    {
+        $x = $tile->getX();
+        $y = $tile->getY();
+
+        $tileS = [$x + parent::DIRECTIONS['S'][0], $y + parent::DIRECTIONS['S'][1]];
+        $tileN = [$x + parent::DIRECTIONS['N'][0], $y + parent::DIRECTIONS['N'][1]];
+        $tileW = [$x + parent::DIRECTIONS['W'][0],  $y + parent::DIRECTIONS['W'][1]];
+        $tileE = [$x + parent::DIRECTIONS['E'][0], $y + parent::DIRECTIONS['E'][1]];
+
+        $tiles = ['S' => $tileS, 'N' => $tileN, 'W' => $tileW, 'E' => $tileE];
+
+        return $tiles;
+    }
+    public function digArena()
+    {
+        $x = $this->getHero()->getX();
+        $y = $this->getHero()->getY();
+        $grass = $this->getTile($x, $y);
+        if ($grass instanceof grass) {
+            $grass->dig();
+            $this->fill($grass);
+        }
+        var_dump($grass);
+    }
+    private function fill(Tile $tile)
+    {
+        foreach ($this->getAdjacentTiles($tile) as $water) {
+            if ($water instanceof Water) {
+                $this->removeTile($tile);
+                $this->addTile($tile);
+            }
+        }
     }
 }

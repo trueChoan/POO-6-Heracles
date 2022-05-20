@@ -6,6 +6,8 @@ use App\Fighter\Fighter;
 use App\Fighter\Hero;
 use App\Movable;
 use App\Tile\Tile;
+use App\Tile\Water;
+
 use Exception;
 
 class Arena
@@ -45,7 +47,7 @@ class Arena
     {
         $this->move($this->getHero(), $direction);
 
-        foreach($this->getMonsters() as $monster) {
+        foreach ($this->getMonsters() as $monster) {
             if ($monster instanceof Movable) {
                 $randomDirection = array_rand(self::DIRECTIONS);
                 $this->move($monster, $randomDirection);
@@ -144,5 +146,20 @@ class Arena
     public function getTiles(): array
     {
         return $this->tiles;
+    }
+
+    public function removeTile(Tile $tile)
+    {
+        unset($tile);
+    }
+    public function addTile(Tile $tile)
+    {
+        $x = $this->getHero()->getX();
+        $y = $this->getHero()->getY();
+        return $tile = new Water($x, $y);
+    }
+
+    public function replaceTile(Tile $newTile)
+    {
     }
 }

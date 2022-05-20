@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Inventory;
+use App\Equipable;
 
-class Weapon
+class Weapon implements Equipable
 {
     private int $damage = 10;
 

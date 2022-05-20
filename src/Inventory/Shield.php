@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Inventory;
+use App\Equipable;
 
-class Shield
+class Shield implements Equipable
 {
     private int $protection = 10;
     private string $image = 'shield.svg';
