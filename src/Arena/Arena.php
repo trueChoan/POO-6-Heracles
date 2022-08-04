@@ -153,15 +153,14 @@ class Arena
 
         $x = $tile->getX();
         $y = $tile->getY();
-
-        foreach ($this->getTiles() as $key => $matchTile) {
+        $tiles = $this->getTiles();
+        foreach ($tiles as $key => $matchTile) {
             if ($matchTile->getX() === $x && $matchTile->getY() === $y) {
-                unset($this->getTiles()[$key]);
+                unset($tiles[$key]);
                 $this->setTiles($this->getTiles());
                 var_dump($this->getTiles()[$key]);
             }
         }
-        return  $tile = $this->getTile($x, $y);
     }
     public function addTile(Tile $tile)
     {
@@ -174,7 +173,7 @@ class Arena
 
     public function replaceTile(Tile $newTile)
     {
-        $newTile = $this->removeTile($newTile);
+        $this->removeTile($newTile);
         $newTile = $this->addTile($newTile);
         return $newTile;
     }
