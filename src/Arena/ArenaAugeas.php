@@ -11,11 +11,11 @@ use App\Tile\Grass;
 use App\Tile\Water;
 use App\Inventory\Shovel;
 use App\Tile\Tile;
-
-
+use Exception;
 
 class ArenaAugeas extends Arena
 {
+
     public function __construct()
     {
         $sword = new Weapon(10);
@@ -152,10 +152,10 @@ class ArenaAugeas extends Arena
         $x = $tile->getX();
         $y = $tile->getY();
 
-        $tileS = [$x + parent::DIRECTIONS['S'][0], $y + parent::DIRECTIONS['S'][1]];
-        $tileN = [$x + parent::DIRECTIONS['N'][0], $y + parent::DIRECTIONS['N'][1]];
-        $tileW = [$x + parent::DIRECTIONS['W'][0],  $y + parent::DIRECTIONS['W'][1]];
-        $tileE = [$x + parent::DIRECTIONS['E'][0], $y + parent::DIRECTIONS['E'][1]];
+        $tileS = $this->getTile($x + parent::DIRECTIONS['S'][0], $y + parent::DIRECTIONS['S'][1]);
+        $tileN = $this->getTile($x + parent::DIRECTIONS['N'][0], $y + parent::DIRECTIONS['N'][1]);
+        $tileW = $this->getTile($x + parent::DIRECTIONS['W'][0],  $y + parent::DIRECTIONS['W'][1]);
+        $tileE = $this->getTile($x + parent::DIRECTIONS['E'][0], $y + parent::DIRECTIONS['E'][1]);
 
         $tiles = ['S' => $tileS, 'N' => $tileN, 'W' => $tileW, 'E' => $tileE];
 
@@ -163,21 +163,32 @@ class ArenaAugeas extends Arena
     }
     public function digArena()
     {
+
         $x = $this->getHero()->getX();
         $y = $this->getHero()->getY();
         $grass = $this->getTile($x, $y);
-        if ($grass instanceof grass) {
+        if ($grass instanceof Grass) {
             $grass->dig();
             $this->fill($grass);
+        } else {
+            throw new Exception('Not On Grass');
         }
-        var_dump($grass);
     }
-    private function fill(Tile $tile)
+
+    private function fill(Grass $tile)
     {
-        foreach ($this->getAdjacentTiles($tile) as $water) {
-            if ($water instanceof Water) {
-                $this->removeTile($tile);
-                $this->addTile($tile);
+        if (($tile->isDigged() === true)) {
+            foreach ($this->getAdjacentTiles($tile) as $water) {
+                /*  $water = new Water($water[0], $water[1]);
+                foreach ($this->waters as $agua) { */
+                if ($water instanceof Water) {
+                    $tile = $this->replaceTile($tile);
+                    foreach ($this->getAdjacentTiles($tile) as $digged) {
+                        if ($digged instanceof Grass && $digged->isDigged() === true) {
+                            $this->fill($digged);
+                        }
+                    }
+                }
             }
         }
     }

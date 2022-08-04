@@ -150,16 +150,47 @@ class Arena
 
     public function removeTile(Tile $tile)
     {
-        unset($tile);
+
+        $x = $tile->getX();
+        $y = $tile->getY();
+
+        foreach ($this->getTiles() as $key => $matchTile) {
+            if ($matchTile->getX() === $x && $matchTile->getY() === $y) {
+                unset($this->getTiles()[$key]);
+                $this->setTiles($this->getTiles());
+                var_dump($this->getTiles()[$key]);
+            }
+        }
+        return  $tile = $this->getTile($x, $y);
     }
     public function addTile(Tile $tile)
     {
-        $x = $this->getHero()->getX();
-        $y = $this->getHero()->getY();
+        $x = $tile->getX();
+        $y = $tile->getY();
+        $tile = new Water($x, $y);
+        $this->tiles[] = $tile;
         return $tile = new Water($x, $y);
     }
 
     public function replaceTile(Tile $newTile)
     {
+        $newTile = $this->removeTile($newTile);
+        $newTile = $this->addTile($newTile);
+        return $newTile;
+    }
+
+
+    /**
+     * Set the value of tiles
+     *
+     * @param array $tiles
+     *
+     * @return self
+     */
+    public function setTiles(array $tiles): self
+    {
+        $this->tiles = $tiles;
+
+        return $this;
     }
 }
