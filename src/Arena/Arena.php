@@ -161,6 +161,7 @@ class Arena
                 var_dump($this->getTiles()[$key]);
             }
         }
+        return $this->getTile($x, $y);
     }
     public function addTile(Tile $tile)
     {
@@ -173,7 +174,7 @@ class Arena
 
     public function replaceTile(Tile $newTile)
     {
-        $this->removeTile($newTile);
+        $newTile = $this->removeTile($newTile);
         $newTile = $this->addTile($newTile);
         return $newTile;
     }
