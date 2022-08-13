@@ -10,7 +10,7 @@ use App\Tile\Water;
 
 use Exception;
 
-class Arena
+abstract class Arena
 {
     public const DIRECTIONS = [
         'N' => [0, -1],
@@ -157,19 +157,18 @@ class Arena
         foreach ($tiles as $key => $matchTile) {
             if ($matchTile->getX() === $x && $matchTile->getY() === $y) {
                 unset($tiles[$key]);
-                $this->setTiles($this->getTiles());
-                var_dump($this->getTiles()[$key]);
+                $this->setTiles($tiles);
             }
         }
-        return $this->getTile($x, $y);
+        return $newtile = [$x, $y];
     }
-    public function addTile(Tile $tile)
+    public function addTile(array $tile)
     {
-        $x = $tile->getX();
-        $y = $tile->getY();
+        $x = $tile[0];
+        $y = $tile[1];
         $tile = new Water($x, $y);
         $this->tiles[] = $tile;
-        return $tile = new Water($x, $y);
+        return $tile;
     }
 
     public function replaceTile(Tile $newTile)
@@ -193,4 +192,6 @@ class Arena
 
         return $this;
     }
+
+    abstract public function isVictory();
 }

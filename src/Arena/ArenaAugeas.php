@@ -2,19 +2,21 @@
 
 namespace App\Arena;
 
-use App\Fighter\Hero;
-use App\Inventory\Shield;
-use App\Inventory\Weapon;
-use App\Tile\Building;
+use Exception;
 use App\Tile\Bush;
+use App\Tile\Tile;
 use App\Tile\Grass;
 use App\Tile\Water;
+use App\Fighter\Hero;
+use App\Tile\Building;
+use App\Inventory\Shield;
 use App\Inventory\Shovel;
-use App\Tile\Tile;
-use Exception;
+use App\Inventory\Weapon;
 
 class ArenaAugeas extends Arena
 {
+    const VICTORY_X = 5;
+    const VICTORY_Y = 7;
 
     public function __construct()
     {
@@ -191,5 +193,16 @@ class ArenaAugeas extends Arena
                 }
             }
         }
+    }
+
+    public function isVictory(): bool
+    {
+        $x = self::VICTORY_X;
+        $y = self::VICTORY_Y;
+        $victory = $this->getTile($x, $y);
+        if ($victory instanceof Water) {
+            return true;
+        }
+        return false;
     }
 }
